@@ -1,5 +1,6 @@
 const express = require('express');
-const { createUser, handleLogin, getUser, deleteUser, getAccount } = require('../controllers/userController');
+const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver } = require('../controllers/userController');
+const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
 
 const routerAPI = express.Router();
@@ -12,7 +13,7 @@ routerAPI.get("/", (req, res) =>{
 })
 
 
-// -------------Login/Register------------------
+// -------------Login/Register-------------
 // Create user
 routerAPI.post("/register", createUser);
 
@@ -27,6 +28,26 @@ routerAPI.delete("/user/:id", deleteUser);
 
 // Get account
 routerAPI.get("/account", getAccount)
-//--------------END------------------------
+
+// become driver
+routerAPI.post("/becomeDriver/:id",becomeDriver)
+//-------------END-------------
+
+// -------------Order-------------
+// Create order
+routerAPI.post("/order", createOrder);
+
+// Get order
+routerAPI.get("/getorder", getOrder)
+
+// Delete order
+routerAPI.delete("/order/:id", deleteOrder);
+
+// Get order
+routerAPI.get("/getorder/:id", getOrderById)
+
+// update order status
+routerAPI.post("/getorder/:id/status", updateOrderStatus)
+// -------------END-------------
 
 module.exports = routerAPI; //export default
