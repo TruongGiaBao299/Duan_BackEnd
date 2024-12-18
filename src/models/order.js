@@ -20,7 +20,9 @@ const userSchema = new mongoose.Schema({
     orderSize: Number,
     type: String,
     message: String,
-    status: String
+    price: Number,
+    status: String,
+    createdBy: String
 });
 
 const Order = mongoose.model('order', userSchema);

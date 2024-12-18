@@ -98,5 +98,5 @@ const updateOrderStatus = async (req, res) => {
 
 
 module.exports = {
-  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver
+  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, updateOrderStatus
 };

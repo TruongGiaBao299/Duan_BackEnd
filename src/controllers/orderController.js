@@ -4,11 +4,15 @@ const {
   deleteOrderService,
   getOrderByIdService,
   updateOrderByIdService,
+  getOrderByEmailService,
 } = require("../services/orderService");
 
 // Tạo đơn hàng
 const createOrder = async (req, res) => {
-  // tạo request body
+  // Access the user email from req.user (set by the JWT middleware)
+  const { email } = req.user;
+
+  // Extract other request body data
   const {
     senderName,
     senderNumber,
@@ -25,7 +29,8 @@ const createOrder = async (req, res) => {
     type,
     message,
   } = req.body;
-  // tạo đơn
+
+  // Call the createOrderService and pass the email along with other data
   const data = await createOrderService(
     senderName,
     senderNumber,
@@ -40,10 +45,14 @@ const createOrder = async (req, res) => {
     orderWeight,
     orderSize,
     type,
-    message
+    message,
+    email // Pass the email as createdBy
   );
+
+  // Return the created order data
   return res.status(200).json(data);
 };
+
 
 // Lấy dữ liệu người dùng
 const getOrder = async (req, res) => {
@@ -73,6 +82,22 @@ const getOrderById = async (req, res) => {
   const data = await getOrderByIdService(id);
   return res.status(200).json(data);
 };
+
+const getOrderByEmail = async (req, res) => {
+  const { email } = req.user; // Extract the email of the logged-in user
+
+  // Fetch orders by email and filter by the specific order id
+  const data = await getOrderByEmailService(email);
+
+  if (!data) {
+    return res.status(404).json({
+      message: "Order not found or you don't have permission to view this order",
+    });
+  }
+
+  return res.status(200).json(data);
+};
+
 
 const updateOrderStatus = async (req, res) => {
   try {
@@ -108,5 +133,6 @@ module.exports = {
   getOrder,
   deleteOrder,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+  getOrderByEmail
 };

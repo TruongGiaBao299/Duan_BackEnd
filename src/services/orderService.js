@@ -21,9 +21,13 @@ const createOrderService = async (
   orderWeight,
   orderSize,
   type,
-  message
+  message,
+  email
 ) => {
   try {
+    // Determine price based on city comparison
+    const price = fromCity === toCity ? 35000 : 100000;
+
     let result = await Order.create({
       // sender
       senderName: senderName,
@@ -44,14 +48,20 @@ const createOrderService = async (
       orderSize: orderSize,
       type: type,
       message: message,
+
+      // calculated price
+      price: price,
       status: "pending",
+      createdBy: email
     });
+
     return result;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
+
 
 // Lấy dữ liệu đơn hàng
 const getOrderService = async () => {
@@ -63,6 +73,21 @@ const getOrderService = async () => {
     return null;
   }
 };
+
+const getOrderByEmailService = async (email) => {
+  try {
+    // Fetch order by id and createdBy (email) field
+    const order = await Order.find({
+      createdBy: email, // Match by the email of the creator
+    });
+
+    return order; // Return the order if found
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 
 // Xóa đơn hàng
 const deleteOrderService = async (id) => {
@@ -119,5 +144,5 @@ const updateOrderByIdService = async (id, updateData) => {
 };
 
 module.exports = {
-  createOrderService, getOrderService, deleteOrderService, getOrderByIdService, updateOrderByIdService
+  createOrderService, getOrderService, deleteOrderService, getOrderByIdService, updateOrderByIdService, getOrderByEmailService
 };

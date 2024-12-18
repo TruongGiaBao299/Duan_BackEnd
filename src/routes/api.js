@@ -1,7 +1,8 @@
 const express = require('express');
 const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver } = require('../controllers/userController');
-const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus } = require('../controllers/orderController');
+const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus, getOrderByEmail } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
+const { createPostOffice, getPostOffice } = require('../controllers/postOfficeController');
 
 const routerAPI = express.Router();
 
@@ -46,8 +47,19 @@ routerAPI.delete("/order/:id", deleteOrder);
 // Get order
 routerAPI.get("/getorder/:id", getOrderById)
 
+// Get order
+routerAPI.get("/getorderemail", getOrderByEmail)
+
 // update order status
 routerAPI.post("/getorder/:id/status", updateOrderStatus)
+// -------------END-------------
+
+// -------------PostOffice-------------
+// Create post office
+routerAPI.post("/postoffice", createPostOffice);
+
+// Get post office
+routerAPI.get("/getpostoffice", getPostOffice)
 // -------------END-------------
 
 module.exports = routerAPI; //export default
