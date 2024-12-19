@@ -3,6 +3,7 @@ const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver }
 const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus, getOrderByEmail } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
 const { createPostOffice, getPostOffice } = require('../controllers/postOfficeController');
+const { createDriver, updateDriverStatus, getDriver } = require('../controllers/driverController');
 
 const routerAPI = express.Router();
 
@@ -61,5 +62,17 @@ routerAPI.post("/postoffice", createPostOffice);
 // Get post office
 routerAPI.get("/getpostoffice", getPostOffice)
 // -------------END-------------
+
+// -------------Driver-------------
+// Create post office
+routerAPI.post("/driver", createDriver);
+
+// update driver status
+routerAPI.post("/driver/:id", updateDriverStatus)
+
+// Get driver
+routerAPI.get("/getdriver", getDriver)
+// -------------END-------------
+
 
 module.exports = routerAPI; //export default

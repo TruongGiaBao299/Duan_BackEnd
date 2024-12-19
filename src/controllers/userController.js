@@ -1,5 +1,5 @@
 const { updateOrderByIdService } = require("../services/orderService");
-const { createUserService, loginService, getUserService, deleteUserService, updateUserService } = require("../services/userService");
+const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService } = require("../services/userService");
 
 
 // Tạo tài khoản
@@ -52,7 +52,7 @@ const becomeDriver = async (req, res) => {
     const { id } = req.params; // Assuming `id` is passed in the URL
 
     // Call the service to update the user's role
-    const updatedUser = await updateUserService(id, { role: "driver" });
+    const updatedUser = await updateUserStatusService(id);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found or update failed." });
@@ -68,35 +68,6 @@ const becomeDriver = async (req, res) => {
   }
 };
 
-const updateOrderStatus = async (req, res) => {
-  try {
-    const { id } = req.params; // Extract the order ID from the request parameters
-    const { status } = req.body; // Extract the new status from the request body
-
-    // Validate the new status
-    const allowedStatuses = ["pending", "in-progress", "shipped", "delivered", "cancelled"];
-    if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
-    }
-
-    // Call the service to update the order status
-    const updatedOrder = await updateOrderByIdService(id, { status }); // Only update the status field
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: "Order not found or update failed" });
-    }
-
-    return res.status(200).json({
-      message: "Order status updated successfully",
-      order: updatedOrder,
-    });
-  } catch (error) {
-    console.error("Error updating order status:", error.message);
-    return res.status(500).json({ message: "Failed to update order status", error: error.message });
-  }
-};
-
-
 module.exports = {
-  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, updateOrderStatus
+  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver
 };
