@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     OfficeLocation: String,
     OfficeLatitude: String,
     OfficeLongitude: String,
+    status: String
 });
 
 const PostOffice = mongoose.model('postoffice', userSchema);

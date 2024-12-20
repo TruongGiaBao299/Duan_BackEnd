@@ -1,8 +1,8 @@
 const express = require('express');
-const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver } = require('../controllers/userController');
+const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest } = require('../controllers/userController');
 const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus, getOrderByEmail } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
-const { createPostOffice, getPostOffice } = require('../controllers/postOfficeController');
+const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus } = require('../controllers/postOfficeController');
 const { createDriver, updateDriverStatus, getDriver } = require('../controllers/driverController');
 
 const routerAPI = express.Router();
@@ -33,6 +33,9 @@ routerAPI.get("/account", getAccount)
 
 // become driver
 routerAPI.post("/becomeDriver/:id",becomeDriver)
+
+// become driver
+routerAPI.post("/becomeGuest/:id", becomeGuest)
 //-------------END-------------
 
 // -------------Order-------------
@@ -61,6 +64,9 @@ routerAPI.post("/postoffice", createPostOffice);
 
 // Get post office
 routerAPI.get("/getpostoffice", getPostOffice)
+
+// update postoffice status
+routerAPI.post("/postoffice/:id", updatePostOfficeStatus)
 // -------------END-------------
 
 // -------------Driver-------------
@@ -72,6 +78,9 @@ routerAPI.post("/driver/:id", updateDriverStatus)
 
 // Get driver
 routerAPI.get("/getdriver", getDriver)
+
+// update driver status
+routerAPI.post("/driverUnActive/:id", UnActivePostOfficeStatus)
 // -------------END-------------
 
 

@@ -100,6 +100,7 @@ const deleteUserService = async (id) => {
   }
 };
 
+// updata status user thành driver
 const updateUserStatusService = async (id) => {
   try {
     // Tìm và cập nhật driver theo ID
@@ -118,11 +119,31 @@ const updateUserStatusService = async (id) => {
   }
 };
 
+// update status user thành guest
+const UnActiveUserStatusService = async (id) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await User.findByIdAndUpdate(
+      id,
+      {
+        role: "guest",
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 
 module.exports = {
   createUserService,
   loginService,
   getUserService,
   deleteUserService,
-  updateUserStatusService
+  updateUserStatusService,
+  UnActiveUserStatusService
 };

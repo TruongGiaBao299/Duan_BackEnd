@@ -1,5 +1,6 @@
 const { updateOrderByIdService } = require("../services/orderService");
-const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService } = require("../services/userService");
+const { UnActivePostOfficeStatusService } = require("../services/postOfficeService");
+const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService } = require("../services/userService");
 
 
 // Tạo tài khoản
@@ -46,7 +47,7 @@ const getAccount = async (req, res) => {
   return res.status(200).json(req.user);
 };
 
-// update role user
+// update role user to driver
 const becomeDriver = async (req, res) => {
   try {
     const { id } = req.params; // Assuming `id` is passed in the URL
@@ -68,6 +69,28 @@ const becomeDriver = async (req, res) => {
   }
 };
 
+// update role user to guest
+const becomeGuest = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming `id` is passed in the URL
+
+    // Call the service to update the user's role
+    const updatedUser = await UnActivePostOfficeStatusService(id);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found or update failed." });
+    }
+
+    return res.status(200).json({
+      message: "You are now a guest!",
+      user: updatedUser, // Return the updated user object
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong.", error: error.message });
+  }
+};
+
 module.exports = {
-  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver
+  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest
 };
