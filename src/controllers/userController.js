@@ -1,6 +1,6 @@
 const { updateOrderByIdService } = require("../services/orderService");
 const { UnActivePostOfficeStatusService } = require("../services/postOfficeService");
-const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService } = require("../services/userService");
+const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService, UnActiveUserStatusService } = require("../services/userService");
 
 
 // Tạo tài khoản
@@ -75,7 +75,7 @@ const becomeGuest = async (req, res) => {
     const { id } = req.params; // Assuming `id` is passed in the URL
 
     // Call the service to update the user's role
-    const updatedUser = await UnActivePostOfficeStatusService(id);
+    const updatedUser = await UnActiveUserStatusService(id);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found or update failed." });
