@@ -5,6 +5,10 @@ const {
   getOrderByIdService,
   updateOrderByIdService,
   getOrderByEmailService,
+  updateOrderDriverStatusService,
+  getDriverOrderByEmailService,
+  updateOrderShippedStatusService,
+  updateOrderCancelledStatusService,
 } = require("../services/orderService");
 
 // Tạo đơn hàng
@@ -98,41 +102,106 @@ const getOrderByEmail = async (req, res) => {
   return res.status(200).json(data);
 };
 
+// update lấy đơn khách hàng
+const updateOrderDriverStatus = async (req, res) => {
+  const { id } = req.params; // Lấy ID từ URL
+  const { email } = req.user;
 
-const updateOrderStatus = async (req, res) => {
   try {
-    const { id } = req.params; // Extract the order ID from the request parameters
-    const { status } = req.body; // Extract the new status from the request body
+    const updatedDriver = await updateOrderDriverStatusService(id, email);
 
-    // Validate the new status
-    const allowedStatuses = ["pending", "inProgress", "shipped", "delivered", "cancelled"];
-    if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
-    }
-
-    // Call the service to update the order status
-    const updatedOrder = await updateOrderByIdService(id, { status }); // Only update the status field
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: "Order not found or update failed" });
+    if (!updatedDriver) {
+      return res.status(404).json({
+        message: "Driver not found or update failed",
+      });
     }
 
     return res.status(200).json({
-      message: "Order status updated successfully",
-      order: updatedOrder,
+      message: "Driver status updated successfully",
+      data: updatedDriver,
     });
   } catch (error) {
-    console.error("Error updating order status:", error.message);
-    return res.status(500).json({ message: "Failed to update order status", error: error.message });
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
 
+// lấy đơn hàng bằng email cho driver
+const getDiverOrderByEmail = async (req, res) => {
+  const { email } = req.user; // Extract the email of the logged-in user
+
+  // Fetch orders by email and filter by the specific order id
+  const data = await getDriverOrderByEmailService(email);
+
+  if (!data) {
+    return res.status(404).json({
+      message: "Order not found or you don't have permission to view this order",
+    });
+  }
+
+  return res.status(200).json(data);
+};
+
+// update đã ship hàng
+const updateOrderShippedStatus = async (req, res) => {
+  const { id } = req.params; // Lấy ID từ URL
+
+  try {
+    const updatedDriver = await updateOrderShippedStatusService(id);
+
+    if (!updatedDriver) {
+      return res.status(404).json({
+        message: "Driver not found or update failed",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Driver status updated successfully",
+      data: updatedDriver,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// update đã hủy hàng
+const updateOrderCancelledStatus = async (req, res) => {
+  const { id } = req.params; // Lấy ID từ URL
+
+  try {
+    const updatedDriver = await updateOrderCancelledStatusService(id);
+
+    if (!updatedDriver) {
+      return res.status(404).json({
+        message: "Driver not found or update failed",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Driver status updated successfully",
+      data: updatedDriver,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
 
 module.exports = {
   createOrder,
   getOrder,
   deleteOrder,
   getOrderById,
-  updateOrderStatus,
-  getOrderByEmail
+  getOrderByEmail,
+  updateOrderDriverStatus,
+  getDiverOrderByEmail,
+  updateOrderShippedStatus,
+  updateOrderCancelledStatus
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest } = require('../controllers/userController');
-const { createOrder, getOrder, deleteOrder, getOrderById, updateOrderStatus, getOrderByEmail } = require('../controllers/orderController');
+const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, getDiverOrderByEmail, updateOrderShippedStatus, updateOrderCancelledStatus } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
 const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus } = require('../controllers/postOfficeController');
 const { createDriver, updateDriverStatus, getDriver } = require('../controllers/driverController');
@@ -51,11 +51,20 @@ routerAPI.delete("/order/:id", deleteOrder);
 // Get order
 routerAPI.get("/getorder/:id", getOrderById)
 
-// Get order
+// Get user order
 routerAPI.get("/getorderemail", getOrderByEmail)
 
-// update order status
-routerAPI.post("/getorder/:id/status", updateOrderStatus)
+// update driver for order
+routerAPI.post("/updateorderdriver/:id", updateOrderDriverStatus)
+
+// Get driver order
+routerAPI.get("/getdriverorderemail", getDiverOrderByEmail)
+
+// update shipped status
+routerAPI.post("/updateordershipped/:id", updateOrderShippedStatus)
+
+// update cancelled status
+routerAPI.post("/updateordercancelled/:id", updateOrderCancelledStatus)
 // -------------END-------------
 
 // -------------PostOffice-------------

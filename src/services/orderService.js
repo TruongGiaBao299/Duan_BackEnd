@@ -52,7 +52,8 @@ const createOrderService = async (
       // calculated price
       price: price,
       status: "pending",
-      createdBy: email
+      createdBy: email,
+      driver: "",
     });
 
     return result;
@@ -61,7 +62,6 @@ const createOrderService = async (
     return null;
   }
 };
-
 
 // Lấy dữ liệu đơn hàng
 const getOrderService = async () => {
@@ -87,7 +87,6 @@ const getOrderByEmailService = async (email) => {
     return null;
   }
 };
-
 
 // Xóa đơn hàng
 const deleteOrderService = async (id) => {
@@ -122,27 +121,83 @@ const getOrderByIdService = async (id) => {
   }
 };
 
-// Cập nhật đơn hàng theo ID
-const updateOrderByIdService = async (id, updateData) => {
+const updateOrderDriverStatusService = async (OrderId, emailDriver) => {
   try {
-    // Find the order by ID and update with the provided data
-    const updatedOrder = await Order.findByIdAndUpdate(id, updateData, {
-      new: true, // Return the updated document
-      runValidators: true, // Ensure schema validators are run
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        status: "is shipping",
+        driver: emailDriver,
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+const getDriverOrderByEmailService = async (emailDriver) => {
+  try {
+    // Fetch order by id and createdBy (email) field
+    const order = await Order.find({
+      driver: emailDriver, // Match by the email of the creator
     });
 
-    // Check if the order exists and was updated
-    if (!updatedOrder) {
-      return null; // Return null if no order is found
-    }
-
-    return updatedOrder; // Return the updated order
+    return order; // Return the order if found
   } catch (error) {
-    console.error("Error updating order by ID:", error.message);
-    return null; // Return null in case of any errors
+    console.log(error);
+    return null;
+  }
+};
+
+const updateOrderShippedStatusService = async (OrderId) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        status: "shipped",
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+const updateOrderCancelledStatusService = async (OrderId) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        status: "cancelled",
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
 module.exports = {
-  createOrderService, getOrderService, deleteOrderService, getOrderByIdService, updateOrderByIdService, getOrderByEmailService
+  createOrderService,
+  getOrderService,
+  deleteOrderService,
+  getOrderByIdService,
+  getOrderByEmailService,
+  updateOrderDriverStatusService,
+  getDriverOrderByEmailService,
+  updateOrderShippedStatusService,
+  updateOrderCancelledStatusService
 };

@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
     message: String,
     price: Number,
     status: String,
-    createdBy: String
+    createdBy: String,
+    driver: String
 });
 
 const Order = mongoose.model('order', userSchema);
