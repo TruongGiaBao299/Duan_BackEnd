@@ -3,7 +3,7 @@ const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, 
 const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, getDiverOrderByEmail, updateOrderShippedStatus, updateOrderCancelledStatus } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
 const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus } = require('../controllers/postOfficeController');
-const { createDriver, updateDriverStatus, getDriver } = require('../controllers/driverController');
+const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus } = require('../controllers/driverController');
 
 const routerAPI = express.Router();
 
@@ -31,11 +31,12 @@ routerAPI.delete("/user/:id", deleteUser);
 // Get account
 routerAPI.get("/account", getAccount)
 
-// become driver
-routerAPI.post("/becomeDriver/:id",becomeDriver)
+// Become driver
+routerAPI.post("/becomeDriver/:email", becomeDriver);
 
-// become driver
-routerAPI.post("/becomeGuest/:id", becomeGuest)
+// Become guest
+routerAPI.post("/becomeGuest/:email", becomeGuest);
+
 //-------------END-------------
 
 // -------------Order-------------
@@ -76,6 +77,9 @@ routerAPI.get("/getpostoffice", getPostOffice)
 
 // update postoffice status
 routerAPI.post("/postoffice/:id", updatePostOfficeStatus)
+
+// update driver status
+routerAPI.post("/postofficeUnActive/:id", UnActivePostOfficeStatus)
 // -------------END-------------
 
 // -------------Driver-------------
@@ -83,13 +87,15 @@ routerAPI.post("/postoffice/:id", updatePostOfficeStatus)
 routerAPI.post("/driver", createDriver);
 
 // update driver status
-routerAPI.post("/driver/:id", updateDriverStatus)
+routerAPI.post("/driver/:email", updateDriverStatus)
 
 // Get driver
 routerAPI.get("/getdriver", getDriver)
 
-// update driver status
-routerAPI.post("/driverUnActive/:id", UnActivePostOfficeStatus)
+// update driver status unactive
+routerAPI.post("/driverUnActive/:email", updateDriverToGuestStatus)
+
+
 // -------------END-------------
 
 

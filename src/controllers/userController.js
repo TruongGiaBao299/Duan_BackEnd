@@ -47,13 +47,13 @@ const getAccount = async (req, res) => {
   return res.status(200).json(req.user);
 };
 
-// update role user to driver
+// Update role user to driver
 const becomeDriver = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming `id` is passed in the URL
+    const { email } = req.params; // Assuming `email` is passed in the URL
 
     // Call the service to update the user's role
-    const updatedUser = await updateUserStatusService(id);
+    const updatedUser = await updateUserStatusService(email);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found or update failed." });
@@ -64,18 +64,22 @@ const becomeDriver = async (req, res) => {
       user: updatedUser, // Return the updated user object
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    console.error("Error updating user role to driver:", error);
+    return res.status(500).json({
+      message: "Something went wrong.",
+      error: error.message,
+    });
   }
 };
 
-// update role user to guest
+
+// Update role user to guest
 const becomeGuest = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming `id` is passed in the URL
+    const { email } = req.params; // Assuming `email` is passed in the URL
 
-    // Call the service to update the user's role
-    const updatedUser = await UnActiveUserStatusService(id);
+    // Call the service to update the user's role to guest
+    const updatedUser = await UnActiveUserStatusService(email);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found or update failed." });
@@ -86,10 +90,14 @@ const becomeGuest = async (req, res) => {
       user: updatedUser, // Return the updated user object
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    console.error("Error updating user role to guest:", error);
+    return res.status(500).json({
+      message: "Something went wrong.",
+      error: error.message,
+    });
   }
 };
+
 
 module.exports = {
   createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest
