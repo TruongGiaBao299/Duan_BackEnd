@@ -100,43 +100,45 @@ const deleteUserService = async (id) => {
   }
 };
 
-// updata status user thành driver
-const updateUserStatusService = async (id) => {
+// Update user status to driver
+const updateUserStatusService = async (email) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await User.findByIdAndUpdate(
-      id,
+    // Find and update the user by email
+    const result = await User.findOneAndUpdate(
+      { email }, // Query by email
       {
-        role: "driver",
+        role: "driver", // Update role to driver
       },
-      { new: true } // Trả về document đã cập nhật
+      { new: true } // Return the updated document
     );
 
     return result;
   } catch (error) {
-    console.log(error);
+    console.error("Error updating user status:", error);
     return null;
   }
 };
 
-// update status user thành guest
-const UnActiveUserStatusService = async (id) => {
+
+// Update user status to guest
+const UnActiveUserStatusService = async (email) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await User.findByIdAndUpdate(
-      id,
+    // Find and update the user by email
+    const result = await User.findOneAndUpdate(
+      { email }, // Query by email
       {
-        role: "guest",
+        role: "guest", // Update role to guest
       },
-      { new: true } // Trả về document đã cập nhật
+      { new: true } // Return the updated document
     );
 
     return result;
   } catch (error) {
-    console.log(error);
+    console.error("Error updating user status to guest:", error);
     return null;
   }
 };
+
 
 
 module.exports = {

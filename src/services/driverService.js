@@ -18,7 +18,7 @@ const createDriverService = async (
     let result = await Driver.create({
       DriverName: DriverName,
       DriverNumber: DriverNumber,
-      DriverEmail: email,
+      email: email,
       DriverBirth: DriverBirth,
       DriverId: DriverId,
       DriverAddress: DriverAddress,
@@ -45,27 +45,49 @@ const getDriverService = async () => {
   }
 };
 
-const updateDriverStatusService = async (driverId) => {
+const updateDriverStatusService = async (email) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Driver.findByIdAndUpdate(
-      driverId,
+    // Find and update the driver by email
+    const result = await Driver.findOneAndUpdate(
+      { email: email }, // Query by DriverEmail
       {
-        status: "active",
-        role: "driver",
+        status: "active", // Update status
+        role: "driver",   // Update role
       },
-      { new: true } // Trả về document đã cập nhật
+      { new: true } // Return the updated document
     );
 
     return result;
   } catch (error) {
-    console.log(error);
+    console.error("Error updating driver status:", error);
     return null;
   }
 };
+
+const updateDriverStatustoGuestService = async (email) => {
+  try {
+    // Find and update the driver by email
+    const result = await Driver.findOneAndUpdate(
+      { email: email }, // Query by DriverEmail
+      {
+        status: "pending", // Update status
+        role: "guest",   // Update role
+      },
+      { new: true } // Return the updated document
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error updating driver status:", error);
+    return null;
+  }
+};
+
+
 
 module.exports = {
   createDriverService,
   updateDriverStatusService,
   getDriverService,
+  updateDriverStatustoGuestService
 };

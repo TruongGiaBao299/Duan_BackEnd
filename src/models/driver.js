@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     // Sender
     DriverName: String,
     DriverNumber: String,
-    DriverEmail: String,
+    email: String,
     DriverBirth: String,
     DriverId: String,
     DriverAddress: String,
