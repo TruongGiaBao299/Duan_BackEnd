@@ -3,6 +3,7 @@ const {
   updateDriverStatusService,
   getDriverService,
   updateDriverStatustoGuestService,
+  deleteDriverService,
 } = require("../services/driverService");
 
 // Tạo đơn hàng
@@ -98,9 +99,25 @@ const getDriver = async (req, res) => {
   return res.status(200).json(data);
 };
 
+
+// xóa tài xế khi ko được accept
+const deleteDriverRequest = async (req, res) => {
+  const { email } = req.params;
+
+  // Call the service function
+  const result = await deleteDriverService(email);
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
 module.exports = {
   createDriver,
   updateDriverStatus,
   getDriver,
-  updateDriverToGuestStatus
+  updateDriverToGuestStatus,
+  deleteDriverRequest
 };

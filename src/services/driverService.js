@@ -52,7 +52,7 @@ const updateDriverStatusService = async (email) => {
       { email: email }, // Query by DriverEmail
       {
         status: "active", // Update status
-        role: "driver",   // Update role
+        role: "driver", // Update role
       },
       { new: true } // Return the updated document
     );
@@ -71,7 +71,7 @@ const updateDriverStatustoGuestService = async (email) => {
       { email: email }, // Query by DriverEmail
       {
         status: "pending", // Update status
-        role: "guest",   // Update role
+        role: "guest", // Update role
       },
       { new: true } // Return the updated document
     );
@@ -83,11 +83,25 @@ const updateDriverStatustoGuestService = async (email) => {
   }
 };
 
-
+// Xóa tài xế
+const deleteDriverService = async (email) => {
+  try {
+    // Find and delete the user by ID
+    const result = await Driver.findOneAndDelete({ email: email });
+    if (!result) {
+      return { success: false, message: "Driver not found" };
+    }
+    return { success: true, message: "Driver request deleted successfully" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Error deleting Driver request" };
+  }
+};
 
 module.exports = {
   createDriverService,
   updateDriverStatusService,
   getDriverService,
-  updateDriverStatustoGuestService
+  updateDriverStatustoGuestService,
+  deleteDriverService
 };
