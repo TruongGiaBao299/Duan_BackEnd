@@ -3,7 +3,7 @@ const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, 
 const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, getDiverOrderByEmail, updateOrderShippedStatus, updateOrderCancelledStatus } = require('../controllers/orderController');
 const auth = require('../middleware/auth');
 const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus } = require('../controllers/postOfficeController');
-const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus } = require('../controllers/driverController');
+const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest } = require('../controllers/driverController');
 
 const routerAPI = express.Router();
 
@@ -95,7 +95,8 @@ routerAPI.get("/getdriver", getDriver)
 // update driver status unactive
 routerAPI.post("/driverUnActive/:email", updateDriverToGuestStatus)
 
-
+// Delete driver request
+routerAPI.delete("/driverrequest/:email", deleteDriverRequest);
 // -------------END-------------
 
 
