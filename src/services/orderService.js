@@ -28,6 +28,10 @@ const createOrderService = async (
     // Determine price based on city comparison
     const price = fromCity === toCity ? 35000 : 100000;
 
+    // Get the current date and time, adjusted for +7 hours
+    const now = new Date();
+    const createdAt = new Date(now.getTime() + 7 * 60 * 60 * 1000); // Add 7 hours in milliseconds
+
     let result = await Order.create({
       // sender
       senderName: senderName,
@@ -53,7 +57,10 @@ const createOrderService = async (
       price: price,
       status: "pending",
       createdBy: email,
-      driver: "",
+      driver: "Find Driver",
+
+      // add creation date and time
+      createdAt: createdAt,
     });
 
     return result;
@@ -62,6 +69,8 @@ const createOrderService = async (
     return null;
   }
 };
+
+
 
 // Lấy dữ liệu đơn hàng
 const getOrderService = async () => {
@@ -178,7 +187,7 @@ const updateOrderCancelledStatusService = async (OrderId) => {
     const result = await Order.findByIdAndUpdate(
       OrderId,
       {
-        status: "cancelled",
+        status: "canceled",
       },
       { new: true } // Trả về document đã cập nhật
     );
