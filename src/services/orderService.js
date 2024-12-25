@@ -8,6 +8,7 @@ const createOrderService = async (
   senderNumber,
   fromAddress,
   fromDistrict,
+  fromWard,
   fromCity,
 
   // recipient
@@ -15,6 +16,7 @@ const createOrderService = async (
   recipientNumber,
   toAddress,
   toDistrict,
+  toWard,
   toCity,
 
   // info
@@ -26,7 +28,7 @@ const createOrderService = async (
 ) => {
   try {
     // Determine price based on city comparison
-    const price = fromCity === toCity ? 35000 : 100000;
+    const price = fromCity === toCity ? 15000 : 50000;
 
     // Get the current date and time, adjusted for +7 hours
     const now = new Date();
@@ -38,6 +40,7 @@ const createOrderService = async (
       senderNumber: senderNumber,
       fromAddress: fromAddress,
       fromDistrict: fromDistrict,
+      fromWard: fromWard,
       fromCity: fromCity,
 
       // recipient
@@ -45,6 +48,7 @@ const createOrderService = async (
       recipientNumber: recipientNumber,
       toAddress: toAddress,
       toDistrict: toDistrict,
+      toWard: toWard,
       toCity: toCity,
 
       // info
@@ -70,8 +74,6 @@ const createOrderService = async (
   }
 };
 
-
-
 // Lấy dữ liệu đơn hàng
 const getOrderService = async () => {
   try {
@@ -83,6 +85,7 @@ const getOrderService = async () => {
   }
 };
 
+// lấy dữ liệu đơn hàng được tạo bởi email người dùng
 const getOrderByEmailService = async (email) => {
   try {
     // Fetch order by id and createdBy (email) field
@@ -130,6 +133,7 @@ const getOrderByIdService = async (id) => {
   }
 };
 
+// update trạng thái đơn hàng đang giao
 const updateOrderDriverStatusService = async (OrderId, emailDriver) => {
   try {
     // Tìm và cập nhật driver theo ID
@@ -149,6 +153,7 @@ const updateOrderDriverStatusService = async (OrderId, emailDriver) => {
   }
 };
 
+// lấy dư liệu đơn hàng tài xế đã nhận
 const getDriverOrderByEmailService = async (emailDriver) => {
   try {
     // Fetch order by id and createdBy (email) field
@@ -163,6 +168,7 @@ const getDriverOrderByEmailService = async (emailDriver) => {
   }
 };
 
+// update trạng thái đơn hàng đang đã giao
 const updateOrderShippedStatusService = async (OrderId) => {
   try {
     // Tìm và cập nhật driver theo ID
@@ -181,6 +187,7 @@ const updateOrderShippedStatusService = async (OrderId) => {
   }
 };
 
+// update trạng thái đơn hàng đã hủy
 const updateOrderCancelledStatusService = async (OrderId) => {
   try {
     // Tìm và cập nhật driver theo ID

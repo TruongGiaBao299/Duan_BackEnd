@@ -4,6 +4,7 @@ const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updat
 const auth = require('../middleware/auth');
 const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus } = require('../controllers/postOfficeController');
 const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest } = require('../controllers/driverController');
+const { getDistrictAndWard, getAllDistrictAndWard } = require('../controllers/addressController');
 
 const routerAPI = express.Router();
 
@@ -99,5 +100,11 @@ routerAPI.post("/driverUnActive/:email", updateDriverToGuestStatus)
 routerAPI.delete("/driverrequest/:email", deleteDriverRequest);
 // -------------END-------------
 
+// -------------Address-------------
+// Get Address
+routerAPI.get("/location/:cityCode", getDistrictAndWard)
 
+// Get All Address
+routerAPI.get("/location", getAllDistrictAndWard)
+// -------------END-------------
 module.exports = routerAPI; //export default

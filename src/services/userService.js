@@ -100,7 +100,7 @@ const deleteUserService = async (id) => {
   }
 };
 
-// Update user status to driver
+// update trạng thái người dùng thành tài xế
 const updateUserStatusService = async (email) => {
   try {
     // Find and update the user by email
@@ -119,8 +119,7 @@ const updateUserStatusService = async (email) => {
   }
 };
 
-
-// Update user status to guest
+// update trạng thái người dùng thành khách
 const UnActiveUserStatusService = async (email) => {
   try {
     // Find and update the user by email
@@ -138,8 +137,6 @@ const UnActiveUserStatusService = async (email) => {
     return null;
   }
 };
-
-
 
 module.exports = {
   createUserService,
