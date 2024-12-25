@@ -22,11 +22,13 @@ const createOrder = async (req, res) => {
     senderNumber,
     fromAddress,
     fromDistrict,
+    fromWard,
     fromCity,
     recipientName,
     recipientNumber,
     toAddress,
     toDistrict,
+    toWard,
     toCity,
     orderWeight,
     orderSize,
@@ -40,11 +42,13 @@ const createOrder = async (req, res) => {
     senderNumber,
     fromAddress,
     fromDistrict,
+    fromWard,
     fromCity,
     recipientName,
     recipientNumber,
     toAddress,
     toDistrict,
+    toWard,
     toCity,
     orderWeight,
     orderSize,
@@ -57,14 +61,14 @@ const createOrder = async (req, res) => {
   return res.status(200).json(data);
 };
 
-
-// Lấy dữ liệu người dùng
+// Lấy dữ liệu đơn hàng
 const getOrder = async (req, res) => {
   // tạo request body
   const data = await getOrderService();
   return res.status(200).json(data);
 };
 
+// Xóa đơn hàng
 const deleteOrder = async (req, res) => {
   const { id } = req.params;
 
@@ -78,7 +82,7 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-// Lấy dữ liệu người dùng
+// Lấy dữ liệu đơn hàng bằng id
 const getOrderById = async (req, res) => {
   const { id } = req.params;
 
@@ -87,6 +91,7 @@ const getOrderById = async (req, res) => {
   return res.status(200).json(data);
 };
 
+// lấy dữ liệu đơn hàng được tạo bởi email người dùng
 const getOrderByEmail = async (req, res) => {
   const { email } = req.user; // Extract the email of the logged-in user
 
@@ -102,7 +107,7 @@ const getOrderByEmail = async (req, res) => {
   return res.status(200).json(data);
 };
 
-// update lấy đơn khách hàng
+// update trạng thái đơn hàng đang giao
 const updateOrderDriverStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
   const { email } = req.user;

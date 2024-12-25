@@ -38,6 +38,7 @@ const getPostOffice = async (req, res) => {
   return res.status(200).json(data);
 };
 
+// đổi trạng thái bưu cục thành active
 const updatePostOfficeStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
 
@@ -62,6 +63,7 @@ const updatePostOfficeStatus = async (req, res) => {
   }
 };
 
+// đổi trạng thái bưu cục thành not activated
 const UnActivePostOfficeStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
 

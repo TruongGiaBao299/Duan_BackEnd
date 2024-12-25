@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   senderNumber: String,
   fromAddress: String,
   fromDistrict: String,
+  fromWard: String,
   fromCity: String,
 
   // Recipient
@@ -13,6 +14,7 @@ const userSchema = new mongoose.Schema({
   recipientNumber: String,
   toAddress: String,
   toDistrict: String,
+  toWard: String,
   toCity: String,
 
   // Order info

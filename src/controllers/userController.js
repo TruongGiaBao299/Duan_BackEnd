@@ -12,7 +12,6 @@ const createUser = async (req, res) => {
   return res.status(200).json(data);
 };
 
-
 // API đăng nhập
 const handleLogin = async (req, res) => {
   // tạo request body
@@ -28,6 +27,7 @@ const getUser = async (req, res) => {
   return res.status(200).json(data);
 };
 
+// Xóa người dùng
 const deleteUser = async (req, res) => {
   const { id } = req.params;
 
@@ -47,7 +47,7 @@ const getAccount = async (req, res) => {
   return res.status(200).json(req.user);
 };
 
-// Update role user to driver
+// update trạng thái người dùng thành tài xế
 const becomeDriver = async (req, res) => {
   try {
     const { email } = req.params; // Assuming `email` is passed in the URL
@@ -72,8 +72,7 @@ const becomeDriver = async (req, res) => {
   }
 };
 
-
-// Update role user to guest
+// update trạng thái người dùng thành khách
 const becomeGuest = async (req, res) => {
   try {
     const { email } = req.params; // Assuming `email` is passed in the URL
@@ -97,7 +96,6 @@ const becomeGuest = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest

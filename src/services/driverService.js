@@ -1,7 +1,7 @@
 require("dotenv").config();
 const Driver = require("../models/driver");
 
-// Tạo đơn hàng
+// Tạo tài xế
 const createDriverService = async (
   // Sender
   DriverName,
@@ -34,7 +34,7 @@ const createDriverService = async (
   }
 };
 
-// Lấy dữ liệu đơn hàng
+// Lấy dữ liệu tài xế
 const getDriverService = async () => {
   try {
     let result = await Driver.find({});
@@ -45,6 +45,7 @@ const getDriverService = async () => {
   }
 };
 
+// update trạng thái hoạt động của tài xế
 const updateDriverStatusService = async (email) => {
   try {
     // Find and update the driver by email
@@ -64,6 +65,7 @@ const updateDriverStatusService = async (email) => {
   }
 };
 
+// update hủy trạng thái hoạt động của tài xế
 const updateDriverStatustoGuestService = async (email) => {
   try {
     // Find and update the driver by email

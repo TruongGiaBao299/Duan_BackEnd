@@ -1,7 +1,7 @@
 require("dotenv").config();
 const PostOffice = require("../models/postoffice");
 
-// Tạo đơn hàng
+// Tạo bưu cục
 const createPostOfficeService = async (
     OfficeName,
     OfficeHotline,
@@ -30,7 +30,7 @@ const createPostOfficeService = async (
 };
 
 
-// Lấy dữ liệu post office
+// Lấy dữ liệu bưu cục
 const getPostOfficeService = async () => {
   try {
     let result = await PostOffice.find({});
@@ -41,7 +41,7 @@ const getPostOfficeService = async () => {
   }
 };
 
-// đổi trạng thái thành active
+// đổi trạng thái bưu cục thành active
 const updatePostOfficeStatusService = async (id) => {
   try {
     // Tìm và cập nhật driver theo ID
@@ -60,7 +60,7 @@ const updatePostOfficeStatusService = async (id) => {
   }
 };
 
-// đổi trạng thái thành unactive
+// đổi trạng thái bưu cục thành not activated
 const UnActivePostOfficeStatusService = async (id) => {
   try {
     // Tìm và cập nhật driver theo ID
