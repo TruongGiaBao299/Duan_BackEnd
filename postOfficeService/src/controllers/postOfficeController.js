@@ -3,29 +3,38 @@ const {
   getPostOfficeService,
   updatePostOfficeStatusService,
   UnActivePostOfficeStatusService,
+  deletePostOfficeService,
 } = require("../services/postOfficeService");
 
 // Tạo bưu cục
 const createPostOffice = async (req, res) => {
+  const { email } = req.user;
   // tạo request body
   const {
+    OfficeUserName,
+    OfficeUserNumber,
+    OfficeUserId,
+    OfficeUserAddress,
     OfficeName,
     OfficeHotline,
     OfficeAddress,
     OfficeDistrict,
+    OfficeWard,
     OfficeCity,
-    OfficeLatitude,
-    OfficeLongitude
   } = req.body;
   // tạo đơn
   const data = await createPostOfficeService(
+    OfficeUserName,
+    OfficeUserNumber,
+    OfficeUserId,
+    OfficeUserAddress,
+    email,
     OfficeName,
     OfficeHotline,
     OfficeAddress,
     OfficeDistrict,
+    OfficeWard,
     OfficeCity,
-    OfficeLatitude,
-    OfficeLongitude
   );
   return res.status(200).json(data);
 };
@@ -39,10 +48,10 @@ const getPostOffice = async (req, res) => {
 
 // đổi trạng thái bưu cục thành active
 const updatePostOfficeStatus = async (req, res) => {
-  const { id } = req.params; // Lấy ID từ URL
+  const { email } = req.params; // Get email from URL parameters
 
   try {
-    const updatedPostOffice = await updatePostOfficeStatusService(id);
+    const updatedPostOffice = await updatePostOfficeStatusService(email);
 
     if (!updatedPostOffice) {
       return res.status(404).json({
@@ -64,10 +73,10 @@ const updatePostOfficeStatus = async (req, res) => {
 
 // đổi trạng thái bưu cục thành not activated
 const UnActivePostOfficeStatus = async (req, res) => {
-  const { id } = req.params; // Lấy ID từ URL
+  const { email } = req.params; // Get email from URL parameters
 
   try {
-    const updatedPostOffice = await UnActivePostOfficeStatusService(id);
+    const updatedPostOffice = await UnActivePostOfficeStatusService(email);
 
     if (!updatedPostOffice) {
       return res.status(404).json({
@@ -87,9 +96,24 @@ const UnActivePostOfficeStatus = async (req, res) => {
   }
 };
 
+// Xóa đơn hàng
+const deletePostOffice = async (req, res) => {
+  const { email } = req.params; // Get email from URL parameters
+
+  // Call the service function
+  const result = await deletePostOfficeService(email);
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
 module.exports = {
   createPostOffice,
   getPostOffice,
   updatePostOfficeStatus,
-  UnActivePostOfficeStatus
+  UnActivePostOfficeStatus,
+  deletePostOffice
 };

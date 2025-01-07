@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest } = require('../controllers/userController');
+const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice } = require('../controllers/userController');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
@@ -26,5 +26,8 @@ router.post("/becomeDriver/:email", becomeDriver);
 
 // Become guest
 router.post("/becomeGuest/:email", becomeGuest);
+
+// Become postoffice
+router.post("/becomePostOffice/:email", becomePostOffice);
 
 module.exports = router;

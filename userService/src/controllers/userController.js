@@ -1,4 +1,4 @@
-const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService, UnActiveUserStatusService } = require("../services/userService");
+const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService, UnActiveUserStatusService, updateUserStatusToPostOfficeService } = require("../services/userService");
 
 
 // Tạo tài khoản
@@ -95,6 +95,31 @@ const becomeGuest = async (req, res) => {
   }
 };
 
+// update trạng thái người dùng thành bưu cục
+const becomePostOffice = async (req, res) => {
+  try {
+    const { email } = req.params; // Assuming `email` is passed in the URL
+
+    // Call the service to update the user's role to guest
+    const updatedUser = await updateUserStatusToPostOfficeService(email);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "user không tìm thấy hoặc cập nhật thất bại" });
+    }
+
+    return res.status(200).json({
+      message: "chúc mừng bạn đã trở lại thành postoffice!",
+      user: updatedUser, // Return the updated user object
+    });
+  } catch (error) {
+    console.error("cập nhật trạng thái user lỗi:", error);
+    return res.status(500).json({
+      message: "lỗi rồi !",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
-  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest
+  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice
 };

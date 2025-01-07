@@ -138,11 +138,31 @@ const UnActiveUserStatusService = async (email) => {
   }
 };
 
+// update trạng thái người dùng thành khách
+const updateUserStatusToPostOfficeService = async (email) => {
+  try {
+    // Find and update the user by email
+    const result = await User.findOneAndUpdate(
+      { email }, // Query by email
+      {
+        role: "postoffice", // Update role to guest
+      },
+      { new: true } // Return the updated document
+    );
+
+    return result;
+  } catch (error) {
+    console.error("cập nhật trạng thái user lỗi:", error);
+    return null;
+  }
+};
+
 module.exports = {
   createUserService,
   loginService,
   getUserService,
   deleteUserService,
   updateUserStatusService,
-  UnActiveUserStatusService
+  UnActiveUserStatusService,
+  updateUserStatusToPostOfficeService
 };
