@@ -9,6 +9,9 @@ const {
   updateOrderShippedStatusService,
   updateOrderCancelledStatusService,
   searchOrderService,
+  updateOrderPostOfficeStatusService,
+  getPostOfficeOrderByEmailService,
+  updateOrderIsShippingStatusService,
 } = require("../services/orderService");
 
 // Tạo đơn hàng
@@ -149,6 +152,31 @@ const getDriverOrderByEmail = async (req, res) => {
   return res.status(200).json(data);
 };
 
+// update đang ship hàng
+const updateOrderIsShippingStatus = async (req, res) => {
+  const { id } = req.params; // Lấy ID từ URL
+
+  try {
+    const updatedDriver = await updateOrderIsShippingStatusService(id);
+
+    if (!updatedDriver) {
+      return res.status(404).json({
+        message: "không tìm thấy tài xế hoặc cập nhật trạng thái không thành công",
+      });
+    }
+
+    return res.status(200).json({
+      message: "trạng thái đã được cập nhật thành đã giao",
+      data: updatedDriver,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 // update đã ship hàng
 const updateOrderShippedStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
@@ -243,6 +271,55 @@ const searchOrder = async (req, res) => {
   }
 };
 
+// update trạng thái đơn hàng đang giao
+const updateOrderPostOfficeStatus = async (req, res) => {
+  const { id } = req.params; // Lấy Order ID từ URL
+  const { email } = req.body; // Lấy email từ body
+
+  if (!email) {
+    return res.status(400).json({
+      message: "Email của bưu cục là bắt buộc.",
+    });
+  }
+
+  try {
+    const updatedOrder = await updateOrderPostOfficeStatusService(id, email);
+
+    if (!updatedOrder) {
+      return res.status(404).json({
+        message: "Không tìm thấy đơn hàng hoặc cập nhật trạng thái không thành công.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Đã gửi đến bưu cục",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Lỗi server",
+    });
+  }
+};
+
+// lấy đơn hàng bằng email cho driver
+const getPostOfficeOrderByEmail = async (req, res) => {
+  const { email } = req.user; // Extract the email of the logged-in user
+
+  // Fetch orders by email and filter by the specific order id
+  const data = await getPostOfficeOrderByEmailService(email);
+
+  if (!data) {
+    return res.status(404).json({
+      message: "không tìm thấy đơn hàng hoặc bạn không có quyền xem đơn hàng này",
+    });
+  }
+
+  return res.status(200).json(data);
+};
+
+
 module.exports = {
   createOrder,
   getOrder,
@@ -253,5 +330,8 @@ module.exports = {
   getDriverOrderByEmail,
   updateOrderShippedStatus,
   updateOrderCancelledStatus,
-  searchOrder
+  searchOrder,
+  updateOrderPostOfficeStatus,
+  getPostOfficeOrderByEmail,
+  updateOrderIsShippingStatus
 };

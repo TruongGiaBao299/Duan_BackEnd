@@ -294,7 +294,7 @@ const updateOrderDriverStatusService = async (OrderId, emailDriver) => {
     const result = await Order.findByIdAndUpdate(
       OrderId,
       {
-        status: "is shipping",
+        status: "delivery to post office",
         driver: emailDriver,
       },
       { new: true } // Trả về document đã cập nhật
@@ -316,6 +316,25 @@ const getDriverOrderByEmailService = async (emailDriver) => {
     });
 
     return order; // Return the order if found
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+// update trạng thái đơn hàng đang đã giao
+const updateOrderIsShippingStatusService = async (OrderId) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        status: "is shipping",
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
   } catch (error) {
     console.log(error);
     return null;
@@ -354,6 +373,40 @@ const updateOrderCancelledStatusService = async (OrderId) => {
     );
 
     return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+// update trạng thái đã gửi bưu cục
+const updateOrderPostOfficeStatusService = async (OrderId, emailPostOffice) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        postOffice: emailPostOffice,
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+// lấy dư liệu đơn hàng tài xế đã nhận
+const getPostOfficeOrderByEmailService = async (emailPostOffice) => {
+  try {
+    // Fetch order by id and createdBy (email) field
+    const order = await Order.find({
+      postOffice: emailPostOffice, // Match by the email of the creator
+    });
+
+    return order; // Return the order if found
   } catch (error) {
     console.log(error);
     return null;
@@ -484,4 +537,7 @@ module.exports = {
   updateOrderShippedStatusService,
   updateOrderCancelledStatusService,
   searchOrderService,
+  updateOrderPostOfficeStatusService,
+  getPostOfficeOrderByEmailService,
+  updateOrderIsShippingStatusService
 };

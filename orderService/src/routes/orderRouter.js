@@ -1,7 +1,10 @@
 const express = require('express');
-const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, updateOrderShippedStatus, updateOrderCancelledStatus, getDriverOrderByEmail, searchOrder } = require('../controllers/orderController');
+const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, updateOrderShippedStatus, updateOrderCancelledStatus, getDriverOrderByEmail, searchOrder, updateOrderPostOfficeStatus, getPostOfficeOrderByEmail, updateOrderIsShippingStatus } = require('../controllers/orderController');
 const router = express.Router();
 const auth = require('../middleware/auth');
+
+// Get order
+router.get("/getorder/:id", getOrderById)
 
 // set middleware for all routes
 router.all("*", auth);
@@ -16,9 +19,6 @@ router.get("/getorder", getOrder)
 // Delete order
 router.delete("/delete/:id", deleteOrder);
 
-// Get order
-router.get("/getorder/:id", getOrderById)
-
 // Get user order
 router.get("/getorderemail", getOrderByEmail)
 
@@ -26,8 +26,14 @@ router.get("/getorderemail", getOrderByEmail)
 // Get driver order
 router.get("/getdriverorderbyemail", getDriverOrderByEmail)
 
+// Get driver order
+router.get("/getpostofficeorderbyemail", getPostOfficeOrderByEmail)
+
 // update driver for order
-router.post("/isshippingorder/:id", updateOrderDriverStatus)
+router.post("/acceptorder/:id", updateOrderDriverStatus)
+
+// update driver for order
+router.post("/isshippingorder/:id", updateOrderIsShippingStatus)
 
 // update shipped status
 router.post("/shippedorder/:id", updateOrderShippedStatus)
@@ -37,5 +43,8 @@ router.post("/canceledorder/:id", updateOrderCancelledStatus)
 
 // search order price
 router.post("/checkprice", searchOrder)
+
+// update postoffice for order
+router.post("/updatepostoffice/:id", updateOrderPostOfficeStatus)
 
 module.exports = router;

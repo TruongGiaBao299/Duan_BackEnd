@@ -30,6 +30,9 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   distance: Number,
   estimatedDeliveryTime: String,
+
+  //Post Office
+  postOffice: String,
 });
 
 const Order = mongoose.model("order", userSchema);
