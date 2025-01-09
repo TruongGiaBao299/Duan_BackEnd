@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
     DriverBirth: String,
     DriverId: String,
     DriverAddress: String,
+    DriverDistrict: String,
+    DriverWard: String,
     DriverCity: String,
     status: String,
     role: String,

@@ -1,9 +1,11 @@
+const { getDriverOrderByEmailService } = require("../../../orderService/src/services/orderService");
 const {
   createPostOfficeService,
   getPostOfficeService,
   updatePostOfficeStatusService,
   UnActivePostOfficeStatusService,
   deletePostOfficeService,
+  getPostOfficeByEmailService,
 } = require("../services/postOfficeService");
 
 // Tạo bưu cục
@@ -110,10 +112,26 @@ const deletePostOffice = async (req, res) => {
   }
 };
 
+const getPostOfficeByEmail = async (req, res) => {
+  const { email } = req.user; // Extract the email of the logged-in user
+
+  // Fetch orders by email and filter by the specific order id
+  const data = await getPostOfficeByEmailService(email);
+
+  if (!data) {
+    return res.status(404).json({
+      message: "không tìm thấy bưu cục với email này",
+    });
+  }
+
+  return res.status(200).json(data);
+};
+
 module.exports = {
   createPostOffice,
   getPostOffice,
   updatePostOfficeStatus,
   UnActivePostOfficeStatus,
-  deletePostOffice
+  deletePostOffice,
+  getPostOfficeByEmail
 };

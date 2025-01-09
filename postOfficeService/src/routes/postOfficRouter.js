@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus, deletePostOffice } = require('../controllers/postOfficeController');
+const { createPostOffice, getPostOffice, updatePostOfficeStatus, UnActivePostOfficeStatus, deletePostOffice, getPostOfficeByEmail } = require('../controllers/postOfficeController');
 
 // set middleware for all routes
 router.all("*", auth);
@@ -20,5 +20,8 @@ router.post("/status/:email", updatePostOfficeStatus)
 
 // update driver status
 router.post("/statusnotactive/:email", UnActivePostOfficeStatus)
+
+// Get user order
+router.get("/getpostofficeemail", getPostOfficeByEmail)
 
 module.exports = router;

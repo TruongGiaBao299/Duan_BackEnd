@@ -4,6 +4,7 @@ const {
   getDriverService,
   updateDriverStatustoGuestService,
   deleteDriverService,
+  getDriverByEmailService,
 } = require("../services/driverService");
 
 // Tạo đơn hàng
@@ -19,6 +20,8 @@ const createDriver = async (req, res) => {
     DriverBirth,
     DriverId,
     DriverAddress,
+    DriverDistrict,
+    DriverWard,
     DriverCity,
   } = req.body;
 
@@ -30,6 +33,8 @@ const createDriver = async (req, res) => {
     DriverBirth,
     DriverId,
     DriverAddress,
+    DriverDistrict,
+    DriverWard,
     DriverCity,
     role
   );
@@ -114,10 +119,26 @@ const deleteDriverRequest = async (req, res) => {
   }
 };
 
+const getDriverByEmail = async (req, res) => {
+  const { email } = req.user; // Extract the email of the logged-in user
+
+  // Fetch orders by email and filter by the specific order id
+  const data = await getDriverByEmailService(email);
+
+  if (!data) {
+    return res.status(404).json({
+      message: "không tìm thấy tài xế với email này",
+    });
+  }
+
+  return res.status(200).json(data);
+};
+
 module.exports = {
   createDriver,
   updateDriverStatus,
   getDriver,
   updateDriverToGuestStatus,
-  deleteDriverRequest
+  deleteDriverRequest,
+  getDriverByEmail
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest } = require('../controllers/driverController');
+const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest, getDriverByEmail } = require('../controllers/driverController');
 
 // set middleware for all routes
 router.all("*", auth);
@@ -20,5 +20,8 @@ router.post("/noactive/:email", updateDriverToGuestStatus)
 
 // Delete driver request
 router.delete("/noaccept/:email", deleteDriverRequest);
+
+// Get driver
+router.get("/getdriverbyemail", getDriverByEmail)
 
 module.exports = router;

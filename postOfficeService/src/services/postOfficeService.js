@@ -135,10 +135,31 @@ const deletePostOfficeService = async (email) => {
   }
 };
 
+// lấy dữ liệu postoffice bằng email
+const getPostOfficeByEmailService = async (email) => {
+  try {
+    // Tìm bưu cục theo email (chỉ trả về một kết quả)
+    const postOffice = await PostOffice.findOne({
+      email: email, // Tìm theo email
+    });
+
+    if (!postOffice) {
+      console.log("Không tìm thấy bưu cục với email:", email);
+      return null; // Trả về null nếu không tìm thấy
+    }
+
+    return postOffice; // Trả về bưu cục nếu tìm thấy
+  } catch (error) {
+    console.log("Lỗi khi tìm bưu cục:", error);
+    return null;
+  }
+};
+
 module.exports = {
   createPostOfficeService,
   getPostOfficeService,
   updatePostOfficeStatusService,
   UnActivePostOfficeStatusService,
   deletePostOfficeService,
+  getPostOfficeByEmailService
 };

@@ -10,6 +10,8 @@ const createDriverService = async (
   DriverBirth,
   DriverId,
   DriverAddress,
+  DriverDistrict,
+  DriverWard,
   DriverCity,
   role,
   status
@@ -22,6 +24,8 @@ const createDriverService = async (
       DriverBirth: DriverBirth,
       DriverId: DriverId,
       DriverAddress: DriverAddress,
+      DriverDistrict: DriverDistrict,
+      DriverWard: DriverWard,
       DriverCity: DriverCity,
       role: role,
       status: "pending",
@@ -100,10 +104,31 @@ const deleteDriverService = async (email) => {
   }
 };
 
+//  lấy dữ liệu tài xế bằng email
+const getDriverByEmailService = async (email) => {
+  try {
+    // Tìm bưu cục theo email (chỉ trả về một kết quả)
+    const driver = await Driver.findOne({
+      email: email, // Tìm theo email
+    });
+
+    if (!driver) {
+      console.log("Không tìm thấy tài xế với email:", email);
+      return null; // Trả về null nếu không tìm thấy
+    }
+
+    return driver; // Trả về tài xế nếu tìm thấy
+  } catch (error) {
+    console.log("Lỗi khi tìm tài xế:", error);
+    return null;
+  }
+};
+
 module.exports = {
   createDriverService,
   updateDriverStatusService,
   getDriverService,
   updateDriverStatustoGuestService,
-  deleteDriverService
+  deleteDriverService,
+  getDriverByEmailService
 };
