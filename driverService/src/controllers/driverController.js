@@ -23,6 +23,7 @@ const createDriver = async (req, res) => {
     DriverDistrict,
     DriverWard,
     DriverCity,
+    postOffice
   } = req.body;
 
   // Call the createOrderService and pass the email along with other data
@@ -36,7 +37,8 @@ const createDriver = async (req, res) => {
     DriverDistrict,
     DriverWard,
     DriverCity,
-    role
+    postOffice,
+    role,
   );
 
   // Return the created order data
@@ -140,5 +142,5 @@ module.exports = {
   getDriver,
   updateDriverToGuestStatus,
   deleteDriverRequest,
-  getDriverByEmail
+  getDriverByEmail,
 };

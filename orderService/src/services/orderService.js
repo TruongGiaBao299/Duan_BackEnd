@@ -93,6 +93,7 @@ const createOrderService = async (
     const fromFullAddress = `${fromAddress}, ${fromWard}, ${fromDistrict}, ${fromCity}`;
     const toFullAddress = `${toAddress}, ${toWard}, ${toDistrict}, ${toCity}`;
 
+    // Tính khoảng cách giữa 2 địa chỉ (nếu cần)
     const distance = await calculateDistanceBetweenAddresses(
       fromFullAddress,
       toFullAddress
@@ -104,21 +105,43 @@ const createOrderService = async (
 
     let price = 0;
 
+    // Kiểm tra nếu cùng thành phố hoặc khác thành phố
     if (fromCity === toCity) {
-      price = distance * 1000;
+      // Cùng thành phố
+      if (orderWeight <= 0.25) {
+        price = 11000; // Mức giá cho <= 250g
+      } else if (orderWeight <= 0.5) {
+        price = 15000; // Mức giá cho > 250g - 500g
+      } else if (orderWeight <= 1) {
+        price = 22500; // Mức giá cho > 500g - 1kg
+      } else if (orderWeight <= 1.5) {
+        price = 28000; // Mức giá cho > 1kg - 1.5kg
+      } else if (orderWeight <= 2) {
+        price = 36000; // Mức giá cho > 1.5kg - 2kg
+      } else {
+        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
+        const extraWeight = orderWeight - 2;
+        price = 36000 + Math.ceil(extraWeight / 0.5) * 2100; // 2100 cho mỗi 0.5kg
+      }
     } else {
-      price = 30000;
+      // Khác thành phố
+      if (orderWeight <= 0.25) {
+        price = 15000; // Mức giá cho <= 250g
+      } else if (orderWeight <= 0.5) {
+        price = 19000; // Mức giá cho > 250g - 500g
+      } else if (orderWeight <= 1) {
+        price = 24500; // Mức giá cho > 500g - 1kg
+      } else if (orderWeight <= 1.5) {
+        price = 32000; // Mức giá cho > 1kg - 1.5kg
+      } else if (orderWeight <= 2) {
+        price = 40000; // Mức giá cho > 1.5kg - 2kg
+      } else {
+        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
+        const extraWeight = orderWeight - 2;
+        price = 40000 + Math.ceil(extraWeight / 0.5) * 3500; // 3500 cho mỗi 0.5kg
+      }
     }
-    
-    // Cộng thêm phí theo trọng lượng
-    if (orderWeight <= 5) {
-      price += 7000;
-    } else {
-      const extraWeight = orderWeight - 5;
-      const additionalFee = Math.ceil(extraWeight / 0.5) * 1500;
-      price += 7000 + additionalFee;
-    }
-    
+
     // Cộng thêm phí theo kích thước
     if (orderSize > 1) {
       const additionalSizeFee = Math.floor(orderSize - 1) * 10000;
@@ -129,34 +152,26 @@ const createOrderService = async (
 
     // Tính thời gian giao hàng dự kiến
     const currentDate = new Date();
-    let minDays = 1;
-    let maxDays = 1;
+    let minDays = 2;
+    let maxDays = 4;
 
     if (fromCity === toCity) {
+      // Cùng thành phố: 1-2 ngày
       minDays = 1;
-      maxDays = 1;
-    } else if (distance <= 300) {
-      minDays = 2;
       maxDays = 2;
-    } else if (distance > 300 && distance <= 1000) {
-      minDays = 2;
-      maxDays = 3;
-    } else if (distance > 1000 && distance <= 2000) {
+    } else {
+      // Khác thành phố: 3-5 ngày
       minDays = 3;
       maxDays = 5;
-    } else {
-      minDays = 5;
-      maxDays = 7;
     }
 
-    // Tính ngày bắt đầu và ngày kết thúc giao hàng
     const startDate = new Date(currentDate);
     startDate.setDate(currentDate.getDate() + minDays);
 
     const endDate = new Date(currentDate);
     endDate.setDate(currentDate.getDate() + maxDays);
 
-    // Hàm format ngày theo dd/mm/yyyy
+    // Format ngày theo dd/mm/yyyy
     const formatDate = (date) => {
       const day = String(date.getDate());
       const month = String(date.getMonth() + 1);
@@ -322,14 +337,34 @@ const getDriverOrderByEmailService = async (emailDriver) => {
   }
 };
 
+// update trạng thái đơn hàng chuẩn bị giap
+const updateOrderPrepareStatusService = async (OrderId) => {
+  try {
+    // Tìm và cập nhật driver theo ID
+    const result = await Order.findByIdAndUpdate(
+      OrderId,
+      {
+        status: "prepare to delivery",
+      },
+      { new: true } // Trả về document đã cập nhật
+    );
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 // update trạng thái đơn hàng đang đã giao
-const updateOrderIsShippingStatusService = async (OrderId) => {
+const updateOrderIsShippingStatusService = async (OrderId, emailDriver) => {
   try {
     // Tìm và cập nhật driver theo ID
     const result = await Order.findByIdAndUpdate(
       OrderId,
       {
         status: "is shipping",
+        driver: emailDriver,
       },
       { new: true } // Trả về document đã cập nhật
     );
@@ -424,13 +459,13 @@ const searchOrderService = async (
   toWard,
   toCity,
   orderWeight,
-  orderSize,
-  type
+  orderSize
 ) => {
   try {
     const fromFullAddress = `${fromAddress}, ${fromWard}, ${fromDistrict}, ${fromCity}`;
     const toFullAddress = `${toAddress}, ${toWard}, ${toDistrict}, ${toCity}`;
 
+    // Tính khoảng cách giữa 2 địa chỉ (nếu cần)
     const distance = await calculateDistanceBetweenAddresses(
       fromFullAddress,
       toFullAddress
@@ -442,21 +477,43 @@ const searchOrderService = async (
 
     let price = 0;
 
+    // Kiểm tra nếu cùng thành phố hoặc khác thành phố
     if (fromCity === toCity) {
-      price = distance * 1000;
+      // Cùng thành phố
+      if (orderWeight <= 0.25) {
+        price = 11000; // Mức giá cho <= 250g
+      } else if (orderWeight <= 0.5) {
+        price = 15000; // Mức giá cho > 250g - 500g
+      } else if (orderWeight <= 1) {
+        price = 22500; // Mức giá cho > 500g - 1kg
+      } else if (orderWeight <= 1.5) {
+        price = 28000; // Mức giá cho > 1kg - 1.5kg
+      } else if (orderWeight <= 2) {
+        price = 36000; // Mức giá cho > 1.5kg - 2kg
+      } else {
+        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
+        const extraWeight = orderWeight - 2;
+        price = 36000 + Math.ceil(extraWeight / 0.5) * 2100; // 2100 cho mỗi 0.5kg
+      }
     } else {
-      price = 30000;
+      // Khác thành phố
+      if (orderWeight <= 0.25) {
+        price = 15000; // Mức giá cho <= 250g
+      } else if (orderWeight <= 0.5) {
+        price = 19000; // Mức giá cho > 250g - 500g
+      } else if (orderWeight <= 1) {
+        price = 24500; // Mức giá cho > 500g - 1kg
+      } else if (orderWeight <= 1.5) {
+        price = 32000; // Mức giá cho > 1kg - 1.5kg
+      } else if (orderWeight <= 2) {
+        price = 40000; // Mức giá cho > 1.5kg - 2kg
+      } else {
+        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
+        const extraWeight = orderWeight - 2;
+        price = 40000 + Math.ceil(extraWeight / 0.5) * 3500; // 3500 cho mỗi 0.5kg
+      }
     }
-    
-    // Cộng thêm phí theo trọng lượng
-    if (orderWeight <= 5) {
-      price += 7000;
-    } else {
-      const extraWeight = orderWeight - 5;
-      const additionalFee = Math.ceil(extraWeight / 0.5) * 1500;
-      price += 7000 + additionalFee;
-    }
-    
+
     // Cộng thêm phí theo kích thước
     if (orderSize > 1) {
       const additionalSizeFee = Math.floor(orderSize - 1) * 10000;
@@ -467,51 +524,37 @@ const searchOrderService = async (
 
     // Tính thời gian giao hàng dự kiến
     const currentDate = new Date();
-    let minDays = 1;
-    let maxDays = 1;
+    let minDays = 2;
+    let maxDays = 4;
 
     if (fromCity === toCity) {
+      // Cùng thành phố: 1-2 ngày
       minDays = 1;
-      maxDays = 1;
-    } else if (distance <= 300) {
-      minDays = 2;
       maxDays = 2;
-    } else if (distance > 300 && distance <= 1000) {
-      minDays = 2;
-      maxDays = 3;
-    } else if (distance > 1000 && distance <= 2000) {
+    } else {
+      // Khác thành phố: 3-5 ngày
       minDays = 3;
       maxDays = 5;
-    } else {
-      minDays = 5;
-      maxDays = 7;
     }
 
-    // Tính ngày bắt đầu và ngày kết thúc giao hàng
     const startDate = new Date(currentDate);
     startDate.setDate(currentDate.getDate() + minDays);
 
     const endDate = new Date(currentDate);
     endDate.setDate(currentDate.getDate() + maxDays);
 
-    // Format ngày theo dd/mm/yy
+    // Format ngày theo dd/mm/yyyy
     const formatDate = (date) => {
       const day = String(date.getDate());
       const month = String(date.getMonth() + 1);
-      const year = String(date.getFullYear());
+      const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     };
 
-    let estimatedDeliveryTime = "";
-    if (minDays === maxDays) {
-      estimatedDeliveryTime = formatDate(startDate); // Nếu thời gian cố định, chỉ hiển thị 1 ngày
-    } else {
-      estimatedDeliveryTime = `${String(startDate.getDate())}-${String(
-        endDate.getDate()
-      )}/${String(startDate.getMonth() + 1)}/${String(
-        startDate.getFullYear()
-      ).slice(-2)}`;
-    }
+    const estimatedDeliveryTime =
+      minDays === maxDays
+        ? formatDate(startDate)
+        : `${formatDate(startDate)} - ${formatDate(endDate)}`;
 
     console.log(`Thời gian giao hàng dự kiến: ${estimatedDeliveryTime}`);
 
@@ -539,5 +582,6 @@ module.exports = {
   searchOrderService,
   updateOrderPostOfficeStatusService,
   getPostOfficeOrderByEmailService,
-  updateOrderIsShippingStatusService
+  updateOrderIsShippingStatusService,
+  updateOrderPrepareStatusService,
 };

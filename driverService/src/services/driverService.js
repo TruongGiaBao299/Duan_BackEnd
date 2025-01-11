@@ -13,8 +13,9 @@ const createDriverService = async (
   DriverDistrict,
   DriverWard,
   DriverCity,
+  postOffice,
   role,
-  status
+  status,
 ) => {
   try {
     let result = await Driver.create({
@@ -27,6 +28,7 @@ const createDriverService = async (
       DriverDistrict: DriverDistrict,
       DriverWard: DriverWard,
       DriverCity: DriverCity,
+      postOffice: postOffice,
       role: role,
       status: "pending",
     });
@@ -130,5 +132,5 @@ module.exports = {
   getDriverService,
   updateDriverStatustoGuestService,
   deleteDriverService,
-  getDriverByEmailService
+  getDriverByEmailService,
 };

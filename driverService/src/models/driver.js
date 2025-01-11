@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     DriverCity: String,
     status: String,
     role: String,
+    postOffice: String
 });
 
 const Driver = mongoose.model('driver', userSchema);

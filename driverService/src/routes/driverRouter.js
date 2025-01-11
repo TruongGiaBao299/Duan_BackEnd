@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest, getDriverByEmail } = require('../controllers/driverController');
+const { createDriver, updateDriverStatus, getDriver, updateDriverToGuestStatus, deleteDriverRequest, getDriverByEmail, updateDriverPostOfficeStatus } = require('../controllers/driverController');
 
 // set middleware for all routes
 router.all("*", auth);

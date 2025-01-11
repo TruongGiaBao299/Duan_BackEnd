@@ -12,6 +12,7 @@ const {
   updateOrderPostOfficeStatusService,
   getPostOfficeOrderByEmailService,
   updateOrderIsShippingStatusService,
+  updateOrderPrepareStatusService,
 } = require("../services/orderService");
 
 // Tạo đơn hàng
@@ -113,7 +114,7 @@ const getOrderByEmail = async (req, res) => {
 // update trạng thái đơn hàng đang giao
 const updateOrderDriverStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
-  const { email } = req.user;
+  const { email, } = req.user;
 
   try {
     const updatedDriver = await updateOrderDriverStatusService(id, email);
@@ -155,9 +156,10 @@ const getDriverOrderByEmail = async (req, res) => {
 // update đang ship hàng
 const updateOrderIsShippingStatus = async (req, res) => {
   const { id } = req.params; // Lấy ID từ URL
+  const { email, } = req.user;
 
   try {
-    const updatedDriver = await updateOrderIsShippingStatusService(id);
+    const updatedDriver = await updateOrderIsShippingStatusService(id, email);
 
     if (!updatedDriver) {
       return res.status(404).json({
@@ -167,6 +169,31 @@ const updateOrderIsShippingStatus = async (req, res) => {
 
     return res.status(200).json({
       message: "trạng thái đã được cập nhật thành đã giao",
+      data: updatedDriver,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// update đang ship hàng
+const updateOrderPrepareStatus = async (req, res) => {
+  const { id } = req.params; // Lấy ID từ URL
+
+  try {
+    const updatedDriver = await updateOrderPrepareStatusService(id);
+
+    if (!updatedDriver) {
+      return res.status(404).json({
+        message: "không tìm thấy tài xế hoặc cập nhật trạng thái không thành công",
+      });
+    }
+
+    return res.status(200).json({
+      message: "trạng thái đã được cập nhật thành chuẩn bị giao",
       data: updatedDriver,
     });
   } catch (error) {
@@ -333,5 +360,6 @@ module.exports = {
   searchOrder,
   updateOrderPostOfficeStatus,
   getPostOfficeOrderByEmail,
-  updateOrderIsShippingStatus
+  updateOrderIsShippingStatus,
+  updateOrderPrepareStatus
 };

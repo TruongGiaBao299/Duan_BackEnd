@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, updateOrderShippedStatus, updateOrderCancelledStatus, getDriverOrderByEmail, searchOrder, updateOrderPostOfficeStatus, getPostOfficeOrderByEmail, updateOrderIsShippingStatus } = require('../controllers/orderController');
+const { createOrder, getOrder, deleteOrder, getOrderById, getOrderByEmail, updateOrderDriverStatus, updateOrderShippedStatus, updateOrderCancelledStatus, getDriverOrderByEmail, searchOrder, updateOrderPostOfficeStatus, getPostOfficeOrderByEmail, updateOrderIsShippingStatus, updateOrderPrepareStatus } = require('../controllers/orderController');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
@@ -34,6 +34,9 @@ router.post("/acceptorder/:id", updateOrderDriverStatus)
 
 // update driver for order
 router.post("/isshippingorder/:id", updateOrderIsShippingStatus)
+
+// update driver for order
+router.post("/prepare/:id", updateOrderPrepareStatus)
 
 // update shipped status
 router.post("/shippedorder/:id", updateOrderShippedStatus)
