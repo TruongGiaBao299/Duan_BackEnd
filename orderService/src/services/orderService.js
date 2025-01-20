@@ -201,7 +201,7 @@ const createOrderService = async (
     console.log(`Thời gian giao hàng dự kiến: ${estimatedDeliveryTime}`);
 
     // Lấy thời gian hiện tại và cộng 7 giờ (GMT+7)
-    const createdAt = formatDateDelivery(new Date(new Date()));
+    const createdAt = new Date(); 
 
     // Tạo đơn hàng
     const result = await Order.create({
