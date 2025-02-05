@@ -1,4 +1,4 @@
-const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService, UnActiveUserStatusService, updateUserStatusToPostOfficeService } = require("../services/userService");
+const { createUserService, loginService, getUserService, deleteUserService, updateUserStatusService, DeActiveUserStatusService, UnActiveUserStatusService, updateUserStatusToPostOfficeService, updatePasswordService } = require("../services/userService");
 
 
 // Tạo tài khoản
@@ -120,6 +120,28 @@ const becomePostOffice = async (req, res) => {
   }
 };
 
+const updatePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const email = req.user.email; // Lấy email từ token đã xác thực
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: "Vui lòng nhập đầy đủ thông tin" });
+    }
+
+    const result = await updatePasswordService(email, oldPassword, newPassword);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi khi cập nhật mật khẩu:", error);
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống" });
+  }
+};
+
 module.exports = {
-  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice
+  createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice, updatePassword
 };

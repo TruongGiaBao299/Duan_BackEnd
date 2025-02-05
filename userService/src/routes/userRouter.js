@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice } = require('../controllers/userController');
+const { createUser, handleLogin, getUser, deleteUser, getAccount, becomeDriver, becomeGuest, becomePostOffice, updatePassword } = require('../controllers/userController');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
@@ -29,5 +29,8 @@ router.post("/becomeGuest/:email", becomeGuest);
 
 // Become postoffice
 router.post("/becomePostOffice/:email", becomePostOffice);
+
+// Update password
+router.put("/updatepassword", updatePassword);
 
 module.exports = router;

@@ -157,6 +157,36 @@ const updateUserStatusToPostOfficeService = async (email) => {
   }
 };
 
+const updatePasswordService = async (email, oldPassword, newPassword) => {
+  try {
+    // Tìm user theo email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return { success: false, message: "Không tìm thấy người dùng" };
+    }
+
+    // Kiểm tra mật khẩu cũ
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return { success: false, message: "Mật khẩu cũ không đúng" };
+    }
+
+    // Hash mật khẩu mới
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Cập nhật mật khẩu
+    user.password = hashedPassword;
+    await user.save();
+
+    return { success: true, message: "Cập nhật mật khẩu thành công" };
+  } catch (error) {
+    console.error("Lỗi khi cập nhật mật khẩu:", error);
+    return { success: false, message: "Lỗi hệ thống" };
+  }
+};
+
+
 module.exports = {
   createUserService,
   loginService,
@@ -164,5 +194,6 @@ module.exports = {
   deleteUserService,
   updateUserStatusService,
   UnActiveUserStatusService,
-  updateUserStatusToPostOfficeService
+  updateUserStatusToPostOfficeService,
+  updatePasswordService
 };
