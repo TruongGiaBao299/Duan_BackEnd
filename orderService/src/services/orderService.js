@@ -109,40 +109,37 @@ const createOrderService = async (
     if (fromCity === toCity) {
       // Cùng thành phố
       if (orderWeight <= 0.25) {
-        price = 11000; // Mức giá cho <= 250g
+        price = 11000;
       } else if (orderWeight <= 0.5) {
-        price = 15000; // Mức giá cho > 250g - 500g
+        price = 15000;
       } else if (orderWeight <= 1) {
-        price = 22500; // Mức giá cho > 500g - 1kg
+        price = 22500;
       } else if (orderWeight <= 1.5) {
-        price = 28000; // Mức giá cho > 1kg - 1.5kg
+        price = 28000;
       } else if (orderWeight <= 2) {
-        price = 36000; // Mức giá cho > 1.5kg - 2kg
+        price = 36000;
       } else {
-        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
         const extraWeight = orderWeight - 2;
-        price = 36000 + Math.ceil(extraWeight / 0.5) * 2100; // 2100 cho mỗi 0.5kg
+        price = 36000 + Math.ceil(extraWeight / 0.5) * 2100;
       }
     } else {
       // Khác thành phố
       if (orderWeight <= 0.25) {
-        price = 15000; // Mức giá cho <= 250g
+        price = 15000;
       } else if (orderWeight <= 0.5) {
-        price = 19000; // Mức giá cho > 250g - 500g
+        price = 19000;
       } else if (orderWeight <= 1) {
-        price = 24500; // Mức giá cho > 500g - 1kg
+        price = 24500;
       } else if (orderWeight <= 1.5) {
-        price = 32000; // Mức giá cho > 1kg - 1.5kg
+        price = 32000;
       } else if (orderWeight <= 2) {
-        price = 40000; // Mức giá cho > 1.5kg - 2kg
+        price = 40000;
       } else {
-        // Thêm phí cho mỗi 0.5kg vượt quá 2kg
         const extraWeight = orderWeight - 2;
-        price = 40000 + Math.ceil(extraWeight / 0.5) * 3500; // 3500 cho mỗi 0.5kg
+        price = 40000 + Math.ceil(extraWeight / 0.5) * 3500;
       }
     }
 
-    // Cộng thêm phí theo kích thước
     if (orderSize > 1) {
       const additionalSizeFee = Math.floor(orderSize - 1) * 10000;
       price += additionalSizeFee;
@@ -150,17 +147,14 @@ const createOrderService = async (
 
     console.log(`Giá cước: ${price} VND`);
 
-    // Tính thời gian giao hàng dự kiến
     const currentDate = new Date();
     let minDays = 2;
     let maxDays = 4;
 
     if (fromCity === toCity) {
-      // Cùng thành phố: 1-2 ngày
       minDays = 1;
       maxDays = 2;
     } else {
-      // Khác thành phố: 3-5 ngày
       minDays = 3;
       maxDays = 5;
     }
@@ -171,39 +165,27 @@ const createOrderService = async (
     const endDate = new Date(currentDate);
     endDate.setDate(currentDate.getDate() + maxDays);
 
-    // Format ngày theo dd/mm/yyyy
     const formatDate = (date) => {
-      const day = String(date.getDate());
-      const month = String(date.getMonth() + 1);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     };
 
-    const formatDateDelivery = (date) => {
-      const day = String(date.getDate());
-      const month = String(date.getMonth() + 1);
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      return `${day}/${month}/${year} ${hours}:${minutes}`;
-    };
-
     let estimatedDeliveryTime = "";
     if (minDays === maxDays) {
-      estimatedDeliveryTime = formatDate(startDate); // Thời gian giao hàng cố định
+      estimatedDeliveryTime = formatDate(startDate);
     } else {
-      // Thời gian giao hàng trong khoảng
-      estimatedDeliveryTime = `${String(startDate.getDate())}-${String(
-        endDate.getDate()
-      )}/${String(startDate.getMonth() + 1)}/${startDate.getFullYear()}`;
+      estimatedDeliveryTime = `${formatDate(startDate)} - ${formatDate(
+        endDate
+      )}`;
     }
 
     console.log(`Thời gian giao hàng dự kiến: ${estimatedDeliveryTime}`);
 
-    // Lấy thời gian hiện tại và cộng 7 giờ (GMT+7)
-    const createdAt = new Date(); 
+    const createdAt = new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
 
-    // Tạo đơn hàng
+    // Tạo đơn hàng và thêm sự kiện vào timeline
     const result = await Order.create({
       senderName,
       senderNumber,
@@ -227,10 +209,15 @@ const createOrderService = async (
       createdBy: email,
       driver: "Find Driver",
       createdAt,
-      estimatedDeliveryTime, // Thêm thời gian dự kiến vào cơ sở dữ liệu
+      estimatedDeliveryTime,
+      timeline: [
+        {
+          status: "Order Created",
+          timestamp: createdAt,
+        },
+      ],
     });
 
-    // Trả về kết quả bao gồm distance và estimatedDeliveryTime
     return {
       ...result.toObject(),
       distance,
@@ -305,17 +292,27 @@ const getOrderByIdService = async (id) => {
 // update trạng thái đơn hàng đang giao
 const updateOrderDriverStatusService = async (OrderId, emailDriver) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        status: "delivery to post office",
-        driver: emailDriver,
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật trạng thái đơn hàng và tài xế
+    order.status = "delivery to post office";
+    order.driver = emailDriver;
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Driver Assigned",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;
@@ -337,96 +334,149 @@ const getDriverOrderByEmailService = async (emailDriver) => {
   }
 };
 
-// update trạng thái đơn hàng chuẩn bị giap
+// update trạng thái đơn hàng chuẩn bị giao
 const updateOrderPrepareStatusService = async (OrderId) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        status: "prepare to delivery",
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật trạng thái đơn hàng
+    order.status = "prepare to delivery";
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Preparing for Delivery",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
 
-// update trạng thái đơn hàng đang đã giao
+// update trạng thái đơn hàng đang đang giao
 const updateOrderIsShippingStatusService = async (OrderId, emailDriver) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        status: "is shipping",
-        driver: emailDriver,
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật trạng thái đơn hàng và tài xế
+    order.status = "is shipping";
+    order.driver = emailDriver;
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Order is being delivered, please keep your phone available.",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
+
 
 // update trạng thái đơn hàng đang đã giao
 const updateOrderShippedStatusService = async (OrderId) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        status: "shipped",
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật trạng thái đơn hàng
+    order.status = "shipped";
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Order has been successfully delivered.",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
+
 
 // update trạng thái đơn hàng đã hủy
 const updateOrderCancelledStatusService = async (OrderId) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        status: "canceled",
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật trạng thái đơn hàng
+    order.status = "canceled";
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Order has been canceled.",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;
   }
 };
 
+
 // update trạng thái đã gửi bưu cục
 const updateOrderPostOfficeStatusService = async (OrderId, emailPostOffice) => {
   try {
-    // Tìm và cập nhật driver theo ID
-    const result = await Order.findByIdAndUpdate(
-      OrderId,
-      {
-        postOffice: emailPostOffice,
-      },
-      { new: true } // Trả về document đã cập nhật
-    );
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(OrderId);
+    if (!order) {
+      console.log("Order not found!");
+      return null;
+    }
 
-    return result;
+    // Cập nhật thông tin bưu cục
+    order.postOffice = emailPostOffice;
+
+    // Thêm sự kiện vào timeline
+    order.timeline.push({
+      status: "Sent to Post Office",
+      timestamp: new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+    });
+
+    // Lưu lại thay đổi
+    await order.save();
+
+    return order;
   } catch (error) {
     console.log(error);
     return null;

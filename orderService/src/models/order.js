@@ -33,6 +33,14 @@ const userSchema = new mongoose.Schema({
 
   //Post Office
   postOffice: String,
+
+  // Timeline
+  timeline: [
+    {
+      status: String,
+      timestamp: { type: Date, default: Date.now } 
+    }
+  ]
 });
 
 const Order = mongoose.model("order", userSchema);
